@@ -13,6 +13,7 @@
     "@mdi/font": "7.4.47",
     "dayjs": "^1.11.13",
     "roboto-fontface": "*",
+    "vite-plugin-pug": "^0.4.1",
     "vue": "^3.4.31",
     "vuetify": "^3.6.14"
   },
