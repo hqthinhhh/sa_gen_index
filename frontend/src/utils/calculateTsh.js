@@ -3,7 +3,7 @@ import {dayjs} from "@/plugins"
 const numerologyMap = {
   A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
   J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9,
-  S: 1, T: 2, U: 3, V: 4, W: 5, X: 6, Y: 7, Z: 8,
+  S: 1, T: 2, U: 3, V: 4, W: 5, X: 6, Y: 7, Z: 8, Đ: 4
 };
 const specialList = [11, 22, 33]
 
@@ -16,47 +16,65 @@ function removeAccents(str) {
 }
 
 // Hàm giảm số về 1 chữ số
-function reduceToSingleDigit(num, checkSpecial=false) {
-  while (num >= 10) {
-    if (checkSpecial && specialList.includes(num)) {
-        break
+export function reduceToSingleDigit(num, checkSpecial=false) {
+    while (num >= 10) {
+        if (checkSpecial && specialList.includes(num)) {
+            break
+        }
+        num = num.toString().split('').map(Number).reduce((a, b) => a + b, 0);
     }
-    num = num.toString().split('').map(Number).reduce((a, b) => a + b, 0);
-  }
-  return Number(num);
+    return Number(num);
 }
+
+function calculateChiSoTamHon (nameInput) {
+    // Tổng nguyên âm
+    const soulNumbers = nameInput
+    .filter(char => vowels.includes(char))
+    .map(char => numerologyMap[char] || 0);
+    return reduceToSingleDigit(soulNumbers.reduce((a, b) => a + b, 0));
+}
+function calculateChiSoTinhCach (nameInput) {
+    // Tổng phụ âm
+    const personalityNumbers = nameInput
+    .filter(char => !vowels.includes(char))
+    .map(char => numerologyMap[char] || 0);
+    return reduceToSingleDigit(personalityNumbers.reduce((a, b) => a + b, 0));
+}
+function calculateChiSoCanBang (fullNameInput) {
+    // Tổng các chữ cái đầu tiên trong bộ tên
+    const firstLetters = fullNameInput
+    .split(/\s+/) // Tách từng từ
+    .map(word => removeAccents(word[0]).toUpperCase()) // Lấy ký tự đầu tiên
+    .filter(Boolean); // Loại bỏ các giá trị null/undefined
+    const balanceNumbers = firstLetters
+    .map(char => numerologyMap[char] || 0);
+    return reduceToSingleDigit(balanceNumbers.reduce((a, b) => a + b, 0));
+}
+
 
 // Hàm tính Thần số học từ họ tên
 export function calculateNumerologyByName(fullName) {
   const cleanName = removeAccents(fullName).replace(/\s+/g, '').toUpperCase();
   const letters = cleanName.split('');
 
-  // Tâm hồn (nguyên âm)
-  const soulNumbers = letters
-    .filter(char => vowels.includes(char))
-    .map(char => numerologyMap[char] || 0);
-  const soulNumber = reduceToSingleDigit(soulNumbers.reduce((a, b) => a + b, 0));
+  // chỉ số Tâm hồn
+  const chiSoTamHon = calculateChiSoTamHon(letters)
 
-  // Tính cách (phụ âm)
-  const personalityNumbers = letters
-    .filter(char => !vowels.includes(char))
-    .map(char => numerologyMap[char] || 0);
-  const personalityNumber = reduceToSingleDigit(personalityNumbers.reduce((a, b) => a + b, 0));
+  // chỉ số Tính cách
+  const chiSoTinhCach = calculateChiSoTinhCach(letters)
 
-  // Cân bằng (tổng các chữ cái đầu tiên trong bộ tên)
-  const firstLetters = fullName
-    .split(/\s+/) // Tách từng từ
-    .map(word => removeAccents(word[0]).toUpperCase()) // Lấy ký tự đầu tiên
-    .filter(Boolean); // Loại bỏ các giá trị null/undefined
-  const balanceNumbers = firstLetters
-    .map(char => numerologyMap[char] || 0);
-  const balanceNumber = reduceToSingleDigit(balanceNumbers.reduce((a, b) => a + b, 0));
+  // chỉ số Cân bằng
+  const chiSoCanBang = calculateChiSoCanBang(fullName)
+
+  // chỉ số Sứ mệnh
+  const chiSoSuMenh = reduceToSingleDigit(chiSoTamHon + chiSoTinhCach)
 
   // Kết quả
   return {
-    'chiSoTamHon': soulNumber,          // Tâm hồn
-    'chiSoTinhCach': personalityNumber,   // Tính cách
-    'chiSoCanBang': balanceNumber        // Cân bằng
+    'chiSoTamHon': chiSoTamHon,
+    'chiSoTinhCach': chiSoTinhCach,
+    'chiSoCanBang': chiSoCanBang,
+    'chiSoSuMenh': chiSoSuMenh
   };
 }
 

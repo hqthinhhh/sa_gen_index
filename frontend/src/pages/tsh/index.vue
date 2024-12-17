@@ -33,7 +33,7 @@ div.pa-2
 <script>
     import {computed, defineComponent, ref} from 'vue'
     import {dayjs} from "@/plugins"
-    import {calculateNumerologyByDate, calculateNumerologyByName} from "@/utils/calculateTsh.js";
+    import {calculateNumerologyByDate, calculateNumerologyByName, reduceToSingleDigit} from "@/utils/calculateTsh.js";
     import ChiSoDuongDoi from "@/utils/tsh/index.js";
 
     const Test = defineComponent({
@@ -42,7 +42,7 @@ div.pa-2
         setup() {
             const nameInput = ref('Hoàng Ngọc Bảo Trân') // t fix cứng tạm để đỡ phải nhập
             const birthInput = ref(null)
-            const dateSelected = ref(new Date('Nov 8, 1999')) // t fix cứng tạm để đỡ phải nhập
+            const dateSelected = ref(new Date('Jun 12, 2012')) // t fix cứng tạm để đỡ phải nhập
             const chiSoTheoTen = ref()
             const chiSoTheoSinhNhat = ref()
             const onClickCalName= () => {
@@ -82,10 +82,10 @@ div.pa-2
                 return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoCanBang"] : null
             })
             const chiSoSuMenh = computed(()=>{
-                return chiSoTamHon.value + chiSoTinhCach.value
+                return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoSuMenh"] : null
             })
             const chiSoTruongThanh = computed(()=>{
-                return chiSoChuDao.value + chiSoSuMenh.value
+                return reduceToSingleDigit(chiSoChuDao.value + chiSoSuMenh.value)
             })
 
             return {
