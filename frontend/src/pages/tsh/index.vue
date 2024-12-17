@@ -1,7 +1,7 @@
 <template lang="pug">
 div.pa-2
     v-text-field(
-      v-model="nameInput"
+      v-model.trim="nameInput"
       placeholder="Nhập tên"
     )
     v-date-picker(v-model="dateSelected")
@@ -42,26 +42,17 @@ div.pa-2
         setup() {
             const nameInput = ref('Hoàng Ngọc Bảo Trân') // t fix cứng tạm để đỡ phải nhập
             const birthInput = ref(null)
-            const dateSelected = ref(new Date('June 12, 2012')) // t fix cứng tạm để đỡ phải nhập
+            const dateSelected = ref(new Date('Nov 8, 1999')) // t fix cứng tạm để đỡ phải nhập
             const chiSoTheoTen = ref()
+            const chiSoTheoSinhNhat = ref()
             const onClickCalName= () => {
-                chiSoTheoTen.value = calculateNumerologyByName(nameInput.value)
                 birthInput.value = dateSelected.value
-                console.log('chiSoTheoTen', chiSoTheoTen.value)
+                chiSoTheoTen.value = calculateNumerologyByName(nameInput.value)
+                chiSoTheoSinhNhat.value = calculateNumerologyByDate(birthInput.value)
             }
             const fullBirthFormat = computed(
                 () => {
                     return dayjs(birthInput.value).format('DD/MM/YYYY')
-                }
-            )
-            const birthOnlyDay = computed(
-                () => {
-                    return dayjs(birthInput.value).format('DD')
-                }
-            )
-            const birthDayMonth = computed(
-                () => {
-                    return dayjs(birthInput.value).format('DD/MM')
                 }
             )
             const resultTitle = computed(
@@ -70,16 +61,16 @@ div.pa-2
                 }
             )
             const chiSoChuDao = computed(()=>{
-                return calculateNumerologyByDate(fullBirthFormat.value, true)
+                return chiSoTheoSinhNhat.value ? chiSoTheoSinhNhat.value["chiSoChuDao"] : null
             })
             const soChuDaoContent = computed(() => {
                 return ChiSoDuongDoi[chiSoChuDao.value]?.replace(/\n/g, '<br>')
             })
             const chiSoNgaySinh = computed(()=>{
-                return calculateNumerologyByDate(birthOnlyDay.value, true)
+                return chiSoTheoSinhNhat.value ? chiSoTheoSinhNhat.value["chiSoNangLucNgaySinh"] : null
             })
             const chiSoThaiDo = computed(()=>{
-                return calculateNumerologyByDate(birthDayMonth.value)
+                return chiSoTheoSinhNhat.value ? chiSoTheoSinhNhat.value["chiSoThaiDo"] : null
             })
             const chiSoTinhCach = computed(()=>{
                 return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoTinhCach"] : null
