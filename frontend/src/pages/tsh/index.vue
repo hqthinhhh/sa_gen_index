@@ -4,23 +4,25 @@ div.pa-2
       v-model="nameInput"
       placeholder="Nhập tên"
     )
-    v-date-picker(v-model="birthInput" )
+    v-date-picker(v-model="dateSelected")
     br
-    v-btn(color="green") Tạo chỉ số
-    p Kết quả {{resultTitle}}
+    v-btn(color="green" @click="onClickCalName" :disabled="!nameInput") Tạo chỉ số
+    p Kết quả: {{resultTitle}}
     br
-    p.font-weight-bold Số chủ đạo (Đường đời): {{soChuDao}}
+    p.font-weight-bold Số chủ đạo (Đường đời): {{chiSoChuDao}}
     span(v-html="soChuDaoContent")
-    p.font-weight-bold Sứ mệnh
+    p.font-weight-bold Sứ mệnh {{chiSoSuMenh}}
     p.font-weight-bold K/n đường đời sứ mệnh
-    p.font-weight-bold Linh hồn
-    p.font-weight-bold Nhân cách
+    p.font-weight-bold Linh hồn {{chiSoTamHon}}
+    p.font-weight-bold Nhân cách {{chiSoTinhCach}}
     p.font-weight-bold Thái độ: {{chiSoThaiDo}}
     p.font-weight-bold Đam mê
     p.font-weight-bold Tư duy trải nghiệm
+    p.font-weight-bold Tư duy Cảm xúc
     p.font-weight-bold Tư duy trực giác
     p.font-weight-bold Ngày sinh: {{chiSoNgaySinh}}
-    p.font-weight-bold Trưởng thành
+    p.font-weight-bold Cân bằng: {{chiSoCanBang}}
+    p.font-weight-bold Trưởng thành {{chiSoTruongThanh}}
     p.font-weight-bold Tháng cá nhân
     p.font-weight-bold Năm cá nhân
     p.font-weight-bold Đỉnh cao chặng
@@ -31,15 +33,22 @@ div.pa-2
 <script>
     import {computed, defineComponent, ref} from 'vue'
     import {dayjs} from "@/plugins"
-    import {sumToOneDigit} from "@/utils/calculateTsh.js";
+    import {calculateNumerologyByDate, calculateNumerologyByName} from "@/utils/calculateTsh.js";
     import ChiSoDuongDoi from "@/utils/tsh/index.js";
 
     const Test = defineComponent({
         name: 'Test',
         components: {},
         setup() {
-            const nameInput = ref('')
-            const birthInput = ref(new Date('June 12, 2012'))
+            const nameInput = ref('Hoàng Ngọc Bảo Trân') // t fix cứng tạm để đỡ phải nhập
+            const birthInput = ref(null)
+            const dateSelected = ref(new Date('June 12, 2012')) // t fix cứng tạm để đỡ phải nhập
+            const chiSoTheoTen = ref()
+            const onClickCalName= () => {
+                chiSoTheoTen.value = calculateNumerologyByName(nameInput.value)
+                birthInput.value = dateSelected.value
+                console.log('chiSoTheoTen', chiSoTheoTen.value)
+            }
             const fullBirthFormat = computed(
                 () => {
                     return dayjs(birthInput.value).format('DD/MM/YYYY')
@@ -57,30 +66,52 @@ div.pa-2
             )
             const resultTitle = computed(
                 () => {
-                    return nameInput.value + fullBirthFormat.value
+                    return (nameInput.value ? nameInput.value : 'Hãy nhập họ tên. ') + (birthInput.value ? fullBirthFormat.value : '')
                 }
             )
-            const soChuDao = computed(()=>{
-                return sumToOneDigit(fullBirthFormat.value, true)
+            const chiSoChuDao = computed(()=>{
+                return calculateNumerologyByDate(fullBirthFormat.value, true)
             })
             const soChuDaoContent = computed(() => {
-                return ChiSoDuongDoi[soChuDao.value]?.replace(/\n/g, '<br>')
+                return ChiSoDuongDoi[chiSoChuDao.value]?.replace(/\n/g, '<br>')
             })
             const chiSoNgaySinh = computed(()=>{
-                return sumToOneDigit(birthOnlyDay.value, true)
-                // return birthOnlyDay.value
+                return calculateNumerologyByDate(birthOnlyDay.value, true)
             })
             const chiSoThaiDo = computed(()=>{
-                return sumToOneDigit(birthDayMonth.value)
+                return calculateNumerologyByDate(birthDayMonth.value)
             })
+            const chiSoTinhCach = computed(()=>{
+                return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoTinhCach"] : null
+            })
+            const chiSoTamHon = computed(()=>{
+                return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoTamHon"] : null
+            })
+            const chiSoCanBang = computed(()=>{
+                return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoCanBang"] : null
+            })
+            const chiSoSuMenh = computed(()=>{
+                return chiSoTamHon.value + chiSoTinhCach.value
+            })
+            const chiSoTruongThanh = computed(()=>{
+                return chiSoChuDao.value + chiSoSuMenh.value
+            })
+
             return {
                 nameInput,
                 birthInput,
+                dateSelected,
                 resultTitle,
-                soChuDao,
+                chiSoChuDao,
                 chiSoNgaySinh,
                 chiSoThaiDo,
-                soChuDaoContent
+                soChuDaoContent,
+                onClickCalName,
+                chiSoTinhCach,
+                chiSoTamHon,
+                chiSoCanBang,
+                chiSoSuMenh,
+                chiSoTruongThanh
             }
         },
     })
