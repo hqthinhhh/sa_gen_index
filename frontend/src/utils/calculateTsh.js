@@ -67,7 +67,7 @@ export function calculateNumerologyByName(fullName) {
   const chiSoCanBang = calculateChiSoCanBang(fullName)
 
   // chỉ số Sứ mệnh
-  const chiSoSuMenh = reduceToSingleDigit(chiSoTamHon + chiSoTinhCach)
+  const chiSoSuMenh = reduceToSingleDigit((chiSoTamHon + chiSoTinhCach), true)
 
   // Kết quả
   return {

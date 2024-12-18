@@ -9,29 +9,29 @@ div.pa-2
     v-btn(color="green" @click="onClickCalName" :disabled="!nameInput") Tạo chỉ số
     p Kết quả: {{resultTitle}}
     br
-    p.font-weight-bold Số chủ đạo (Đường đời): {{chiSoChuDao}}
+    p.font-weight-bold.text-red Số chủ đạo (Đường đời): {{chiSoChuDao}}
     span(v-html="soChuDaoContent")
-    p.font-weight-bold Sứ mệnh {{chiSoSuMenh}}
+    p.font-weight-bold.text-red Sứ mệnh {{chiSoSuMenh}}
     span(v-html="chiSoSuMenhContent")
-    p.font-weight-bold K/n đường đời sứ mệnh
-    p.font-weight-bold Linh hồn {{chiSoTamHon}}
+    p.font-weight-bold.text-red K/n đường đời sứ mệnh
+    p.font-weight-bold.text-red Linh hồn {{chiSoTamHon}}
     span(v-html="chiSoTamHonContent")
-    p.font-weight-bold Nhân cách {{chiSoTinhCach}}
+    p.font-weight-bold.text-red Nhân cách {{chiSoTinhCach}}
     span(v-html="chiSoTinhCachContent")
-    p.font-weight-bold Thái độ: {{soThaiDo}}
+    p.font-weight-bold.text-red Thái độ: {{soThaiDo}}
     span(v-html="chiSoThaiDoContent")
-    p.font-weight-bold Đam mê
-    p.font-weight-bold Tư duy trải nghiệm
-    p.font-weight-bold Tư duy Cảm xúc
-    p.font-weight-bold Tư duy trực giác
-    p.font-weight-bold Ngày sinh: {{chiSoNgaySinh}}
+    p.font-weight-bold.text-red Đam mê
+    p.font-weight-bold.text-red Tư duy trải nghiệm
+    p.font-weight-bold.text-red Tư duy Cảm xúc
+    p.font-weight-bold.text-red Tư duy trực giác
+    p.font-weight-bold.text-red Ngày sinh: {{chiSoNgaySinh}}
     span(v-html="soNgaySinhContent")
-    p.font-weight-bold Cân bằng: {{chiSoCanBang}}
-    p.font-weight-bold Trưởng thành {{chiSoTruongThanh}}
-    p.font-weight-bold Tháng cá nhân
-    p.font-weight-bold Năm cá nhân
-    p.font-weight-bold Đỉnh cao chặng
-    p.font-weight-bold Thách thức
+    p.font-weight-bold.text-red Cân bằng: {{chiSoCanBang}}
+    p.font-weight-bold.text-red Trưởng thành {{chiSoTruongThanh}}
+    p.font-weight-bold.text-red Tháng cá nhân
+    p.font-weight-bold.text-red Năm cá nhân
+    p.font-weight-bold.text-red Đỉnh cao chặng
+    p.font-weight-bold.text-red Thách thức
 
 </template>
 
@@ -109,7 +109,7 @@ div.pa-2
                 return ChiSoSuMenh[chiSoSuMenh.value]?.replace(/\n/g, '<br>')
             })
             const chiSoTruongThanh = computed(()=>{
-                return reduceToSingleDigit(chiSoChuDao.value + chiSoSuMenh.value)
+                return reduceToSingleDigit((chiSoChuDao.value + chiSoSuMenh.value), true)
             })
 
             return {
