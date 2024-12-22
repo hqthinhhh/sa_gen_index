@@ -11,23 +11,23 @@ div.pa-2
     br
     p.font-weight-bold.text-red Số chủ đạo (Đường đời): {{chiSoChuDao}}
     span(v-html="soChuDaoContent")
-    p.font-weight-bold.text-red Sứ mệnh {{chiSoSuMenh}}
+    p.font-weight-bold.text-red Sứ mệnh: {{chiSoSuMenh}}
     span(v-html="chiSoSuMenhContent")
     p.font-weight-bold.text-red K/n đường đời sứ mệnh
-    p.font-weight-bold.text-red Linh hồn {{chiSoTamHon}}
+    p.font-weight-bold.text-red Linh hồn: {{chiSoTamHon}}
     span(v-html="chiSoTamHonContent")
     p.font-weight-bold.text-red Nhân cách {{chiSoTinhCach}}
     span(v-html="chiSoTinhCachContent")
     p.font-weight-bold.text-red Thái độ: {{soThaiDo}}
     span(v-html="chiSoThaiDoContent")
-    p.font-weight-bold.text-red Đam mê
-    p.font-weight-bold.text-red Tư duy trải nghiệm
-    p.font-weight-bold.text-red Tư duy Cảm xúc
-    p.font-weight-bold.text-red Tư duy trực giác
     p.font-weight-bold.text-red Ngày sinh: {{chiSoNgaySinh}}
     span(v-html="soNgaySinhContent")
     p.font-weight-bold.text-red Cân bằng: {{chiSoCanBang}}
-    p.font-weight-bold.text-red Trưởng thành {{chiSoTruongThanh}}
+    p.font-weight-bold.text-red Trưởng thành: {{chiSoTruongThanh}}
+    p.font-weight-bold.text-red Cầu nối tình cảm: {{chiSoCauNoiTinhCam}}
+    p.font-weight-bold.text-red Cầu nối hạnh phúc: {{chiSoCauNoiHanhPhuc}}
+    p.font-weight-bold.text-red Nợ nghiệp: {{chiSoNoNghiep}}
+    p.font-weight-bold.text-red Nội cảm
     p.font-weight-bold.text-red Tháng cá nhân
     p.font-weight-bold.text-red Năm cá nhân
     p.font-weight-bold.text-red Đỉnh cao chặng
@@ -38,7 +38,7 @@ div.pa-2
 <script>
     import {computed, defineComponent, ref} from 'vue'
     import {dayjs} from "@/plugins"
-    import {calculateNumerologyByDate, calculateNumerologyByName, reduceToSingleDigit} from "@/utils/calculateTsh.js";
+    import {calculateNumerologyByDate, calculateNumerologyByName, reduceToSingleDigit, calculateNoNghiep} from "@/utils/calculateTsh.js";
     import ChiSoDuongDoi from "@/utils/tsh/index.js";
     import ChiSoThaiDo from "@/utils/tsh/ChiSoThaiDo.js";
     import SoNangLucNgaySinh from "@/utils/tsh/SoNangLucNgaySinh.js";
@@ -111,6 +111,20 @@ div.pa-2
             const chiSoTruongThanh = computed(()=>{
                 return reduceToSingleDigit((chiSoChuDao.value + chiSoSuMenh.value), true)
             })
+            const chiSoCauNoiTinhCam = computed(()=>{
+                return reduceToSingleDigit(Math.abs(chiSoChuDao.value - chiSoSuMenh.value))
+            })
+            const chiSoCauNoiHanhPhuc = computed(()=>{
+                return reduceToSingleDigit(Math.abs(chiSoTinhCach.value - chiSoCanBang.value))
+            })
+            const chiSoNoNghiep = computed(()=>{
+                const allChiSo = calculateNoNghiep(birthInput.value, nameInput.value)
+                let chiSoNoNghiepArray = []
+                Object.keys(allChiSo).forEach(chiSo => {
+                    chiSoNoNghiepArray.push(chiSo)
+                })
+                return chiSoNoNghiepArray.join(', ')
+            })
 
             return {
                 nameInput,
@@ -131,7 +145,10 @@ div.pa-2
                 chiSoTamHon,
                 chiSoCanBang,
                 chiSoSuMenh,
-                chiSoTruongThanh
+                chiSoTruongThanh,
+                chiSoCauNoiTinhCam,
+                chiSoCauNoiHanhPhuc,
+                chiSoNoNghiep
             }
         },
     })

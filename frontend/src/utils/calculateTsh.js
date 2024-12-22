@@ -6,6 +6,7 @@ const numerologyMap = {
   S: 1, T: 2, U: 3, V: 4, W: 5, X: 6, Y: 7, Z: 8, Đ: 4
 };
 const specialList = [11, 22, 33]
+const noNghiepList = [13, 14, 16, 19]
 
 // Danh sách nguyên âm
 const vowels = ['A', 'E', 'I', 'O', 'U'];
@@ -16,9 +17,11 @@ function removeAccents(str) {
 }
 
 // Hàm giảm số về 1 chữ số
-export function reduceToSingleDigit(num, checkSpecial=false) {
+export function reduceToSingleDigit(num, checkSpecial=false, checkNoNghiep=false) {
     while (num >= 10) {
-        if (checkSpecial && specialList.includes(num)) {
+        const isSpecial = checkSpecial && specialList.includes(num)
+        const isNoNghiep = checkNoNghiep && noNghiepList.includes(num)
+        if (isSpecial || isNoNghiep) {
             break
         }
         num = num.toString().split('').map(Number).reduce((a, b) => a + b, 0);
@@ -26,21 +29,21 @@ export function reduceToSingleDigit(num, checkSpecial=false) {
     return Number(num);
 }
 
-function calculateChiSoTamHon (nameInput) {
+function calculateChiSoTamHon (nameInput, checkNoNghiep=false) {
     // Tổng nguyên âm
     const soulNumbers = nameInput
     .filter(char => vowels.includes(char))
     .map(char => numerologyMap[char] || 0);
-    return reduceToSingleDigit(soulNumbers.reduce((a, b) => a + b, 0));
+    return reduceToSingleDigit(soulNumbers.reduce((a, b) => a + b, 0), false, checkNoNghiep);
 }
-function calculateChiSoTinhCach (nameInput) {
+function calculateChiSoTinhCach (nameInput, checkNoNghiep=false) {
     // Tổng phụ âm
     const personalityNumbers = nameInput
     .filter(char => !vowels.includes(char))
     .map(char => numerologyMap[char] || 0);
-    return reduceToSingleDigit(personalityNumbers.reduce((a, b) => a + b, 0));
+    return reduceToSingleDigit(personalityNumbers.reduce((a, b) => a + b, 0), false, checkNoNghiep);
 }
-function calculateChiSoCanBang (fullNameInput) {
+function calculateChiSoCanBang (fullNameInput, checkNoNghiep=false) {
     // Tổng các chữ cái đầu tiên trong bộ tên
     const firstLetters = fullNameInput
     .split(/\s+/) // Tách từng từ
@@ -48,26 +51,26 @@ function calculateChiSoCanBang (fullNameInput) {
     .filter(Boolean); // Loại bỏ các giá trị null/undefined
     const balanceNumbers = firstLetters
     .map(char => numerologyMap[char] || 0);
-    return reduceToSingleDigit(balanceNumbers.reduce((a, b) => a + b, 0));
+    return reduceToSingleDigit(balanceNumbers.reduce((a, b) => a + b, 0), false, checkNoNghiep);
 }
 
 
 // Hàm tính Thần số học từ họ tên
-export function calculateNumerologyByName(fullName) {
+export function calculateNumerologyByName(fullName, checkNoNghiep=false) {
   const cleanName = removeAccents(fullName).replace(/\s+/g, '').toUpperCase();
   const letters = cleanName.split('');
 
   // chỉ số Tâm hồn
-  const chiSoTamHon = calculateChiSoTamHon(letters)
+  const chiSoTamHon = calculateChiSoTamHon(letters, checkNoNghiep)
 
   // chỉ số Tính cách
-  const chiSoTinhCach = calculateChiSoTinhCach(letters)
+  const chiSoTinhCach = calculateChiSoTinhCach(letters, checkNoNghiep)
 
   // chỉ số Cân bằng
-  const chiSoCanBang = calculateChiSoCanBang(fullName)
+  const chiSoCanBang = calculateChiSoCanBang(fullName, checkNoNghiep)
 
   // chỉ số Sứ mệnh
-  const chiSoSuMenh = reduceToSingleDigit((chiSoTamHon + chiSoTinhCach), true)
+  const chiSoSuMenh = reduceToSingleDigit((chiSoTamHon + chiSoTinhCach), true, checkNoNghiep)
 
   // Kết quả
   return {
@@ -78,22 +81,13 @@ export function calculateNumerologyByName(fullName) {
   };
 }
 
-export function calculateChiSoChuDao (dateInput) {
+export function calculateChiSoChuDao (dateInput, checkSpecial=true, checkNoNghiep=false) {
     // Remove all non-numeric characters
     // const numericString = dateInput?.replace(/[^0-9]/g, '');
     const formattedDate = dayjs(dateInput).format('DDMMYYYY')
-    let chiSoChuDao = reduceToSingleDigit(formattedDate, true)
-
-    while (chiSoChuDao >= 10) {
-        // so chu dao 11,22,33
-        if (specialList.includes(chiSoChuDao)) {
-            return chiSoChuDao
-        }
-        chiSoChuDao = reduceToSingleDigit(chiSoChuDao)
-    }
-    return chiSoChuDao
+    return reduceToSingleDigit(formattedDate, checkSpecial, checkNoNghiep)
 }
-export function calculateChiSoNangLucNgaySinh (dateInput) {
+export function calculateChiSoNangLucNgaySinh (dateInput, checkNoNghiep=false) {
     const dayOnly =  dayjs(dateInput).format('DD')
     // check truong hop dac biet cho chi so ngay sinh
     if (dayOnly === '22') {
@@ -101,25 +95,55 @@ export function calculateChiSoNangLucNgaySinh (dateInput) {
     } else if (dayOnly === '11' || dayOnly === '29') {
         return 11
     }
-    return reduceToSingleDigit(dayOnly)
+    return reduceToSingleDigit(dayOnly, false, checkNoNghiep)
 }
-export function calculateChiSoThaiDo (dateInput) {
+export function calculateChiSoThaiDo (dateInput, checkNoNghiep=false) {
     const dayMonthFormat = dayjs(dateInput).format('DDMM')
-    return reduceToSingleDigit(dayMonthFormat)
+    return reduceToSingleDigit(dayMonthFormat, false, checkNoNghiep)
 }
-export function calculateNumerologyByDate(dateInput) {
+export function calculateNumerologyByDate(dateInput, checkNoNghiep=false) {
     // Tinh chi so nang luc ngay sinh
-    const chiSoNangLucNgaySinh = calculateChiSoNangLucNgaySinh(dateInput)
+    const chiSoNangLucNgaySinh = calculateChiSoNangLucNgaySinh(dateInput, checkNoNghiep)
 
     // Tinh chi so chu dao
-    const chiSoChuDao = calculateChiSoChuDao(dateInput)
+    const chiSoChuDao = calculateChiSoChuDao(dateInput, true, checkNoNghiep)
 
     // Tinh chi so thai do
-    const chiSoThaiDo = calculateChiSoThaiDo(dateInput)
+    const chiSoThaiDo = calculateChiSoThaiDo(dateInput, checkNoNghiep)
 
     return {
         'chiSoNangLucNgaySinh': chiSoNangLucNgaySinh,
         'chiSoChuDao': chiSoChuDao,
         'chiSoThaiDo': chiSoThaiDo
     }
+}
+
+export function calculateNoNghiep (dateInput, fullname) {
+    const chiSoTheoNgay = calculateNumerologyByDate(dateInput, true)
+    const chiSoTheoTen = calculateNumerologyByName(fullname, true)
+
+    const noNghiepObject = {}
+    if (noNghiepList.includes(chiSoTheoNgay["chiSoChuDao"])) {
+        noNghiepObject[chiSoTheoNgay["chiSoChuDao"]] = chiSoTheoNgay["chiSoChuDao"]
+    }
+    if (noNghiepList.includes(chiSoTheoNgay["chiSoNangLucNgaySinh"])) {
+        noNghiepObject[chiSoTheoNgay["chiSoNangLucNgaySinh"]] = chiSoTheoNgay["chiSoNangLucNgaySinh"]
+    }
+    if (noNghiepList.includes(chiSoTheoNgay["chiSoThaiDo"])) {
+        noNghiepObject[chiSoTheoNgay["chiSoThaiDo"]] = chiSoTheoNgay["chiSoThaiDo"]
+    }
+
+    if (noNghiepList.includes(chiSoTheoTen["chiSoTamHon"])) {
+        noNghiepObject[chiSoTheoTen["chiSoTamHon"]] = chiSoTheoTen["chiSoTamHon"]
+    }
+    if (noNghiepList.includes(chiSoTheoTen["chiSoTinhCach"])) {
+        noNghiepObject[chiSoTheoTen["chiSoTinhCach"]] = chiSoTheoTen["chiSoTinhCach"]
+    }
+    if (noNghiepList.includes(chiSoTheoTen["chiSoCanBang"])) {
+        noNghiepObject[chiSoTheoTen["chiSoCanBang"]] = chiSoTheoTen["chiSoCanBang"]
+    }
+    if (noNghiepList.includes(chiSoTheoTen["chiSoSuMenh"])) {
+        noNghiepObject[chiSoTheoTen["chiSoSuMenh"]] = chiSoTheoTen["chiSoSuMenh"]
+    }
+    return noNghiepObject
 }
