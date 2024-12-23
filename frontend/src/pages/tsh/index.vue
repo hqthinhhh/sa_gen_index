@@ -28,6 +28,7 @@ div.pa-2
     p.font-weight-bold.text-red Cầu nối hạnh phúc: {{chiSoCauNoiHanhPhuc}}
     p.font-weight-bold.text-red Nợ nghiệp: {{chiSoNoNghiep}}
     p.font-weight-bold.text-red Nội cảm
+    p.font-weight-bold.text-red Khuyết thiếu:
     p.font-weight-bold.text-red Tháng cá nhân
     p.font-weight-bold.text-red Năm cá nhân
     p.font-weight-bold.text-red Đỉnh cao chặng:
@@ -43,6 +44,12 @@ div.pa-2
     p.font-weight-bold - Đỉnh cao chặng 4: Tuổi: {{chiSoDinhCao[4].age}} - Chỉ số {{chiSoDinhCao[4].num}}
     span(v-html="chiSoDinhCao[4].content")
     p.font-weight-bold.text-red Thách thức
+    p.font-weight-bold.text-red Tuổi trẻ:
+    p.font-weight-bold.text-red Viên mãn:
+    p.font-weight-bold.text-red Các số trong biểu đồ ngày sinh:
+    p.font-weight-bold.text-red Mũi tên trong biểu đồ ngày sinh:
+    p.font-weight-bold.text-red Mũi tên trong biểu đồ tên:
+    p.font-weight-bold.text-red Số ưu thế:
 
 </template>
 
