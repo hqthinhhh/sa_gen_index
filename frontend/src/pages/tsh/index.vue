@@ -9,8 +9,8 @@ div.pa-2
     v-btn(color="green" @click="onClickCalName" :disabled="!nameInput") Tạo chỉ số
     p Kết quả: {{resultTitle}}
     br
-    p.font-weight-bold.text-red Số chủ đạo (Đường đời): {{chiSoChuDao}}
-    span(v-html="soChuDaoContent")
+    p.font-weight-bold.text-red Số chủ đạo (Đường đời): {{chiSoTheoSinhNhat.chiSoChuDao.num}}
+    span(v-html="chiSoTheoSinhNhat.chiSoChuDao.content")
     p.font-weight-bold.text-red Sứ mệnh: {{chiSoSuMenh}}
     span(v-html="chiSoSuMenhContent")
     p.font-weight-bold.text-red K/n đường đời sứ mệnh
@@ -18,10 +18,10 @@ div.pa-2
     span(v-html="chiSoTamHonContent")
     p.font-weight-bold.text-red Nhân cách {{chiSoTinhCach}}
     span(v-html="chiSoTinhCachContent")
-    p.font-weight-bold.text-red Thái độ: {{soThaiDo}}
-    span(v-html="chiSoThaiDoContent")
-    p.font-weight-bold.text-red Ngày sinh: {{chiSoNgaySinh}}
-    span(v-html="soNgaySinhContent")
+    p.font-weight-bold.text-red Thái độ: {{chiSoTheoSinhNhat.chiSoThaiDo.num}}
+    span(v-html="chiSoTheoSinhNhat.chiSoThaiDo.content")
+    p.font-weight-bold.text-red Ngày sinh: {{chiSoTheoSinhNhat.chiSoNangLucNgaySinh.num}}
+    span(v-html="chiSoTheoSinhNhat.chiSoNangLucNgaySinh.content")
     p.font-weight-bold.text-red Cân bằng: {{chiSoCanBang}}
     p.font-weight-bold.text-red Trưởng thành: {{chiSoTruongThanh}}
     p.font-weight-bold.text-red Cầu nối tình cảm: {{chiSoCauNoiTinhCam}}
@@ -65,9 +65,6 @@ div.pa-2
         calculateDinhCao,
         breakLineContent
     } from "@/utils/calculateTsh.js";
-    import ChiSoDuongDoi from "@/utils/tsh/index.js";
-    import ChiSoThaiDo from "@/utils/tsh/ChiSoThaiDo.js";
-    import SoNangLucNgaySinh from "@/utils/tsh/SoNangLucNgaySinh.js";
     import ChiSoLinhHon from "@/utils/tsh/ChiSoLinhHon.js";
     import ChiSoTinhCach from "@/utils/tsh/ChiSoTinhCach.js";
     import ChiSoSuMenh from "@/utils/tsh/ChiSoSuMenh.js";
@@ -79,12 +76,15 @@ div.pa-2
             const birthInput = ref(null)
             const dateSelected = ref(new Date('Apr 16, 2001')) // t fix cứng tạm để đỡ phải nhập
             const chiSoTheoTen = ref()
-            const chiSoTheoSinhNhat = ref()
+            // const chiSoTheoSinhNhat = ref()
             const onClickCalName= () => {
                 birthInput.value = dateSelected.value
                 chiSoTheoTen.value = calculateNumerologyByName(nameInput.value)
-                chiSoTheoSinhNhat.value = calculateNumerologyByDate(birthInput.value)
+                // chiSoTheoSinhNhat.value = calculateNumerologyByDate(birthInput.value)
             }
+            const chiSoTheoSinhNhat = computed(()=>{
+                return calculateNumerologyByDate(birthInput.value)
+            })
             const fullBirthFormat = computed(
                 () => {
                     return dayjs(birthInput.value).format('DD/MM/YYYY')
@@ -96,22 +96,7 @@ div.pa-2
                 }
             )
             const chiSoChuDao = computed(()=>{
-                return chiSoTheoSinhNhat.value ? chiSoTheoSinhNhat.value["chiSoChuDao"] : null
-            })
-            const soChuDaoContent = computed(() => {
-                return ChiSoDuongDoi[chiSoChuDao.value]?.replace(/\n/g, '<br>')
-            })
-            const chiSoNgaySinh = computed(()=>{
-                return chiSoTheoSinhNhat.value ? chiSoTheoSinhNhat.value["chiSoNangLucNgaySinh"] : null
-            })
-            const soNgaySinhContent = computed(() => {
-                return SoNangLucNgaySinh[chiSoNgaySinh.value]?.replace(/\n/g, '<br>')
-            })
-            const soThaiDo = computed(()=>{
-                return chiSoTheoSinhNhat.value ? chiSoTheoSinhNhat.value["chiSoThaiDo"] : null
-            })
-            const chiSoThaiDoContent = computed(() => {
-                return breakLineContent(ChiSoThaiDo[soThaiDo.value])
+                return chiSoTheoSinhNhat.value.chiSoChuDao.num
             })
             const chiSoTinhCach = computed(()=>{
                 return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoTinhCach"] : null
@@ -155,12 +140,6 @@ div.pa-2
                 birthInput,
                 dateSelected,
                 resultTitle,
-                chiSoChuDao,
-                chiSoNgaySinh,
-                soThaiDo,
-                soChuDaoContent,
-                chiSoThaiDoContent,
-                soNgaySinhContent,
                 chiSoTamHonContent,
                 chiSoTinhCachContent,
                 chiSoSuMenhContent,
@@ -174,6 +153,7 @@ div.pa-2
                 chiSoCauNoiHanhPhuc,
                 chiSoNoNghiep,
                 chiSoDinhCao,
+                chiSoTheoSinhNhat
             }
         },
     })

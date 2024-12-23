@@ -1,4 +1,7 @@
 import {dayjs} from "@/plugins"
+import ChiSoDuongDoi from "@/utils/tsh/index.js"
+import SoNangLucNgaySinh from "@/utils/tsh/SoNangLucNgaySinh.js";
+import ChiSoThaiDo from "@/utils/tsh/ChiSoThaiDo.js";
 import ChiSoDinhCao from "@/utils/tsh/ChiSoDinhCao.js";
 import ChiSoNoNghiep from "@/utils/tsh/ChiSoNoNghiep.js";
 const numerologyMap = {
@@ -27,7 +30,7 @@ export function reduceToSingleDigit(num, checkSpecial=false, checkNoNghiep=false
         }
         num = num.toString().split('').map(Number).reduce((a, b) => a + b, 0);
     }
-    return Number(num);
+    return isNaN(Number(num)) ? null : Number(num)
 }
 
 function calculateChiSoTamHon (nameInput, checkNoNghiep=false) {
@@ -102,6 +105,15 @@ export function calculateChiSoThaiDo (dateInput, checkNoNghiep=false) {
     const dayMonthFormat = dayjs(dateInput).format('DDMM')
     return reduceToSingleDigit(dayMonthFormat, false, checkNoNghiep)
 }
+function calculateChiSoTuoiTre (dateInput) {
+    const monthFormat = dayjs(dateInput).format('MM')
+    return reduceToSingleDigit(monthFormat)
+}
+function calculateChiSoVienMan (dateInput) {
+    const yearFormat = dayjs(dateInput).format('YYYY')
+    return reduceToSingleDigit(yearFormat)
+}
+
 export function calculateNumerologyByDate(dateInput, checkNoNghiep=false) {
     // Tinh chi so nang luc ngay sinh
     const chiSoNangLucNgaySinh = calculateChiSoNangLucNgaySinh(dateInput, checkNoNghiep)
@@ -112,26 +124,51 @@ export function calculateNumerologyByDate(dateInput, checkNoNghiep=false) {
     // Tinh chi so thai do
     const chiSoThaiDo = calculateChiSoThaiDo(dateInput, checkNoNghiep)
 
+    // Tinh chi so tuoi tre
+    const chiSoTuoiTre = calculateChiSoTuoiTre(dateInput)
+
+    // Tinh chi so vien man
+    const chiSoVienMan = calculateChiSoVienMan(dateInput)
+
     return {
-        'chiSoNangLucNgaySinh': chiSoNangLucNgaySinh,
-        'chiSoChuDao': chiSoChuDao,
-        'chiSoThaiDo': chiSoThaiDo
+        'chiSoNangLucNgaySinh': {
+            'num': chiSoNangLucNgaySinh,
+            'content': breakLineContent(SoNangLucNgaySinh[chiSoNangLucNgaySinh])
+        },
+        'chiSoChuDao': {
+            'num': chiSoChuDao,
+            'content': breakLineContent(ChiSoDuongDoi[chiSoChuDao])
+        },
+        'chiSoThaiDo': {
+            'num': chiSoThaiDo,
+            'content': breakLineContent(ChiSoThaiDo[chiSoThaiDo])
+        },
+        'chiSoTuoiTre': chiSoTuoiTre,
+        'chiSoVienMan': chiSoVienMan
     }
 }
 
 export function calculateNoNghiep (dateInput, fullname) {
-    const chiSoTheoNgay = calculateNumerologyByDate(dateInput, true)
+    // Tinh chi so nang luc ngay sinh
+    const chiSoNangLucNgaySinh = calculateChiSoNangLucNgaySinh(dateInput, true)
+
+    // Tinh chi so chu dao
+    const chiSoChuDao = calculateChiSoChuDao(dateInput, true, true)
+
+    // Tinh chi so thai do
+    const chiSoThaiDo = calculateChiSoThaiDo(dateInput, true)
+
     const chiSoTheoTen = calculateNumerologyByName(fullname, true)
 
     const noNghiepObject = {}
-    if (noNghiepList.includes(chiSoTheoNgay["chiSoChuDao"])) {
-        noNghiepObject[chiSoTheoNgay["chiSoChuDao"]] = chiSoTheoNgay["chiSoChuDao"]
+    if (noNghiepList.includes(chiSoChuDao)) {
+        noNghiepObject[chiSoChuDao] = chiSoChuDao
     }
-    if (noNghiepList.includes(chiSoTheoNgay["chiSoNangLucNgaySinh"])) {
-        noNghiepObject[chiSoTheoNgay["chiSoNangLucNgaySinh"]] = chiSoTheoNgay["chiSoNangLucNgaySinh"]
+    if (noNghiepList.includes(chiSoNangLucNgaySinh)) {
+        noNghiepObject[chiSoNangLucNgaySinh] = chiSoNangLucNgaySinh
     }
-    if (noNghiepList.includes(chiSoTheoNgay["chiSoThaiDo"])) {
-        noNghiepObject[chiSoTheoNgay["chiSoThaiDo"]] = chiSoTheoNgay["chiSoThaiDo"]
+    if (noNghiepList.includes(chiSoThaiDo)) {
+        noNghiepObject[chiSoThaiDo] = chiSoThaiDo
     }
 
     if (noNghiepList.includes(chiSoTheoTen["chiSoTamHon"])) {
