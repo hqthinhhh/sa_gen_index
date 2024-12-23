@@ -30,7 +30,18 @@ div.pa-2
     p.font-weight-bold.text-red Nội cảm
     p.font-weight-bold.text-red Tháng cá nhân
     p.font-weight-bold.text-red Năm cá nhân
-    p.font-weight-bold.text-red Đỉnh cao chặng
+    p.font-weight-bold.text-red Đỉnh cao chặng:
+    p.font-weight-bold - Chỉ số Ngày: {{chiSoDinhCao.day}}
+    p.font-weight-bold - Chỉ số Tháng: {{chiSoDinhCao.month}}
+    p.font-weight-bold - Chỉ số Năm: {{chiSoDinhCao.year}}
+    p.font-weight-bold - Đỉnh cao chặng 1: Tuổi: {{chiSoDinhCao[1].age}} - Chỉ số {{chiSoDinhCao[1].num}}
+    span(v-html="chiSoDinhCao[1].content")
+    p.font-weight-bold - Đỉnh cao chặng 2: Tuổi: {{chiSoDinhCao[2].age}} - Chỉ số {{chiSoDinhCao[2].num}}
+    span(v-html="chiSoDinhCao[2].content")
+    p.font-weight-bold - Đỉnh cao chặng 3: Tuổi: {{chiSoDinhCao[3].age}} - Chỉ số {{chiSoDinhCao[3].num}}
+    span(v-html="chiSoDinhCao[3].content")
+    p.font-weight-bold - Đỉnh cao chặng 4: Tuổi: {{chiSoDinhCao[4].age}} - Chỉ số {{chiSoDinhCao[4].num}}
+    span(v-html="chiSoDinhCao[4].content")
     p.font-weight-bold.text-red Thách thức
 
 </template>
@@ -38,7 +49,7 @@ div.pa-2
 <script>
     import {computed, defineComponent, ref} from 'vue'
     import {dayjs} from "@/plugins"
-    import {calculateNumerologyByDate, calculateNumerologyByName, reduceToSingleDigit, calculateNoNghiep} from "@/utils/calculateTsh.js";
+    import {calculateNumerologyByDate, calculateNumerologyByName, reduceToSingleDigit, calculateNoNghiep, calculateDinhCao} from "@/utils/calculateTsh.js";
     import ChiSoDuongDoi from "@/utils/tsh/index.js";
     import ChiSoThaiDo from "@/utils/tsh/ChiSoThaiDo.js";
     import SoNangLucNgaySinh from "@/utils/tsh/SoNangLucNgaySinh.js";
@@ -51,7 +62,7 @@ div.pa-2
         setup() {
             const nameInput = ref('Hoàng Ngọc Bảo Trân') // t fix cứng tạm để đỡ phải nhập
             const birthInput = ref(null)
-            const dateSelected = ref(new Date('Jun 12, 2012')) // t fix cứng tạm để đỡ phải nhập
+            const dateSelected = ref(new Date('May 1, 1974')) // t fix cứng tạm để đỡ phải nhập
             const chiSoTheoTen = ref()
             const chiSoTheoSinhNhat = ref()
             const onClickCalName= () => {
@@ -125,6 +136,9 @@ div.pa-2
                 })
                 return chiSoNoNghiepArray.join(', ')
             })
+            const chiSoDinhCao = computed(()=>{
+                return calculateDinhCao(birthInput.value)
+            })
 
             return {
                 nameInput,
@@ -148,7 +162,8 @@ div.pa-2
                 chiSoTruongThanh,
                 chiSoCauNoiTinhCam,
                 chiSoCauNoiHanhPhuc,
-                chiSoNoNghiep
+                chiSoNoNghiep,
+                chiSoDinhCao,
             }
         },
     })

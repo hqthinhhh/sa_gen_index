@@ -1,5 +1,5 @@
 import {dayjs} from "@/plugins"
-
+import ChiSoDinhCao from "@/utils/tsh/ChiSoDinhCao.js";
 const numerologyMap = {
   A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
   J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9,
@@ -146,4 +146,47 @@ export function calculateNoNghiep (dateInput, fullname) {
         noNghiepObject[chiSoTheoTen["chiSoSuMenh"]] = chiSoTheoTen["chiSoSuMenh"]
     }
     return noNghiepObject
+}
+
+export function calculateDinhCao (dateInput) {
+    // Tinh chi so chu dao
+    const chiSoChuDao = calculateChiSoChuDao(dateInput, false, false)
+    const tuoiDinh1 = 36 - chiSoChuDao
+    const tuoiDinh2 = tuoiDinh1 + 9
+    const tuoiDinh3 = tuoiDinh2 + 9
+    const tuoiDinh4 = tuoiDinh3 + 9
+
+    const day = reduceToSingleDigit(dayjs(dateInput).format('DD'))
+    const month = reduceToSingleDigit(dayjs(dateInput).format('MM'))
+    const year = reduceToSingleDigit(dayjs(dateInput).format('YYYY'))
+
+    const chiSoDinh1 = reduceToSingleDigit(day + month)
+    const chiSoDinh2 = reduceToSingleDigit(day + year)
+    const chiSoDinh3 = reduceToSingleDigit(month + day + day + year)
+    const chiSoDinh4 = reduceToSingleDigit(month +  year)
+    return {
+        1: {
+            'age': tuoiDinh1 || null,
+            'num': chiSoDinh1 || null,
+            'content': ChiSoDinhCao[chiSoDinh1] || null
+        },
+        2: {
+            'age': tuoiDinh2 || null,
+            'num': chiSoDinh2 || null,
+            'content': ChiSoDinhCao[chiSoDinh2] || null
+        },
+        3: {
+            'age': tuoiDinh3 || null,
+            'num': chiSoDinh3 || null,
+            'content': ChiSoDinhCao[chiSoDinh3] || null
+        },
+        4: {
+            'age': tuoiDinh4 || null,
+            'num': chiSoDinh4 || null,
+            'content': ChiSoDinhCao[chiSoDinh4] || null
+        },
+        'day': day || null,
+        'month': month || null,
+        'year': year || null
+    }
 }
