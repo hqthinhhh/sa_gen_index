@@ -26,7 +26,8 @@ div.pa-2
     p.font-weight-bold.text-red Trưởng thành: {{chiSoTruongThanh}}
     p.font-weight-bold.text-red Cầu nối tình cảm: {{chiSoCauNoiTinhCam}}
     p.font-weight-bold.text-red Cầu nối hạnh phúc: {{chiSoCauNoiHanhPhuc}}
-    p.font-weight-bold.text-red Nợ nghiệp: {{chiSoNoNghiep}}
+    p.font-weight-bold.text-red Nợ nghiệp: {{chiSoNoNghiep.numbersShow}}
+    p(v-for="chiSo in Object.keys(chiSoNoNghiep.content)" v-html="chiSoNoNghiep.content[chiSo]")
     p.font-weight-bold.text-red Nội cảm
     p.font-weight-bold.text-red Khuyết thiếu:
     p.font-weight-bold.text-red Tháng cá nhân
@@ -56,7 +57,14 @@ div.pa-2
 <script>
     import {computed, defineComponent, ref} from 'vue'
     import {dayjs} from "@/plugins"
-    import {calculateNumerologyByDate, calculateNumerologyByName, reduceToSingleDigit, calculateNoNghiep, calculateDinhCao} from "@/utils/calculateTsh.js";
+    import {
+        calculateNumerologyByDate,
+        calculateNumerologyByName,
+        reduceToSingleDigit,
+        calculateNoNghiep,
+        calculateDinhCao,
+        breakLineContent
+    } from "@/utils/calculateTsh.js";
     import ChiSoDuongDoi from "@/utils/tsh/index.js";
     import ChiSoThaiDo from "@/utils/tsh/ChiSoThaiDo.js";
     import SoNangLucNgaySinh from "@/utils/tsh/SoNangLucNgaySinh.js";
@@ -69,7 +77,7 @@ div.pa-2
         setup() {
             const nameInput = ref('Hoàng Ngọc Bảo Trân') // t fix cứng tạm để đỡ phải nhập
             const birthInput = ref(null)
-            const dateSelected = ref(new Date('May 1, 1974')) // t fix cứng tạm để đỡ phải nhập
+            const dateSelected = ref(new Date('Apr 16, 2001')) // t fix cứng tạm để đỡ phải nhập
             const chiSoTheoTen = ref()
             const chiSoTheoSinhNhat = ref()
             const onClickCalName= () => {
@@ -103,19 +111,19 @@ div.pa-2
                 return chiSoTheoSinhNhat.value ? chiSoTheoSinhNhat.value["chiSoThaiDo"] : null
             })
             const chiSoThaiDoContent = computed(() => {
-                return ChiSoThaiDo[soThaiDo.value]?.replace(/\n/g, '<br>')
+                return breakLineContent(ChiSoThaiDo[soThaiDo.value])
             })
             const chiSoTinhCach = computed(()=>{
                 return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoTinhCach"] : null
             })
             const chiSoTinhCachContent = computed(() => {
-                return ChiSoTinhCach[chiSoTinhCach.value]?.replace(/\n/g, '<br>')
+                return breakLineContent(ChiSoTinhCach[chiSoTinhCach.value])
             })
             const chiSoTamHon = computed(()=>{
                 return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoTamHon"] : null
             })
             const chiSoTamHonContent = computed(() => {
-                return ChiSoLinhHon[chiSoTamHon.value]?.replace(/\n/g, '<br>')
+                return breakLineContent(ChiSoLinhHon[chiSoTamHon.value])
             })
             const chiSoCanBang = computed(()=>{
                 return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoCanBang"] : null
@@ -124,7 +132,7 @@ div.pa-2
                 return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoSuMenh"] : null
             })
             const chiSoSuMenhContent = computed(()=>{
-                return ChiSoSuMenh[chiSoSuMenh.value]?.replace(/\n/g, '<br>')
+                return breakLineContent(ChiSoSuMenh[chiSoSuMenh.value])
             })
             const chiSoTruongThanh = computed(()=>{
                 return reduceToSingleDigit((chiSoChuDao.value + chiSoSuMenh.value), true)
@@ -136,12 +144,7 @@ div.pa-2
                 return reduceToSingleDigit(Math.abs(chiSoTinhCach.value - chiSoCanBang.value))
             })
             const chiSoNoNghiep = computed(()=>{
-                const allChiSo = calculateNoNghiep(birthInput.value, nameInput.value)
-                let chiSoNoNghiepArray = []
-                Object.keys(allChiSo).forEach(chiSo => {
-                    chiSoNoNghiepArray.push(chiSo)
-                })
-                return chiSoNoNghiepArray.join(', ')
+                return calculateNoNghiep(birthInput.value, nameInput.value)
             })
             const chiSoDinhCao = computed(()=>{
                 return calculateDinhCao(birthInput.value)

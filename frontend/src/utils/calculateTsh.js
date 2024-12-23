@@ -1,5 +1,6 @@
 import {dayjs} from "@/plugins"
 import ChiSoDinhCao from "@/utils/tsh/ChiSoDinhCao.js";
+import ChiSoNoNghiep from "@/utils/tsh/ChiSoNoNghiep.js";
 const numerologyMap = {
   A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
   J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9,
@@ -19,8 +20,8 @@ function removeAccents(str) {
 // Hàm giảm số về 1 chữ số
 export function reduceToSingleDigit(num, checkSpecial=false, checkNoNghiep=false) {
     while (num >= 10) {
-        const isSpecial = checkSpecial && specialList.includes(num)
-        const isNoNghiep = checkNoNghiep && noNghiepList.includes(num)
+        const isSpecial = checkSpecial && specialList.includes(Number(num))
+        const isNoNghiep = checkNoNghiep && noNghiepList.includes(Number(num))
         if (isSpecial || isNoNghiep) {
             break
         }
@@ -145,7 +146,17 @@ export function calculateNoNghiep (dateInput, fullname) {
     if (noNghiepList.includes(chiSoTheoTen["chiSoSuMenh"])) {
         noNghiepObject[chiSoTheoTen["chiSoSuMenh"]] = chiSoTheoTen["chiSoSuMenh"]
     }
-    return noNghiepObject
+
+    let chiSoNoNghiepArray = []
+    let content = {}
+    Object.keys(noNghiepObject).forEach(chiSo => {
+        chiSoNoNghiepArray.push(chiSo)
+        content[chiSo] = breakLineContent(ChiSoNoNghiep[chiSo])
+    })
+    return {
+        'numbersShow': chiSoNoNghiepArray.join(', '),
+        'content': content
+    }
 }
 
 export function calculateDinhCao (dateInput) {
@@ -168,25 +179,29 @@ export function calculateDinhCao (dateInput) {
         1: {
             'age': tuoiDinh1 || null,
             'num': chiSoDinh1 || null,
-            'content': ChiSoDinhCao[chiSoDinh1] || null
+            'content': breakLineContent(ChiSoDinhCao[chiSoDinh1]) || null
         },
         2: {
             'age': tuoiDinh2 || null,
             'num': chiSoDinh2 || null,
-            'content': ChiSoDinhCao[chiSoDinh2] || null
+            'content': breakLineContent(ChiSoDinhCao[chiSoDinh2]) || null
         },
         3: {
             'age': tuoiDinh3 || null,
             'num': chiSoDinh3 || null,
-            'content': ChiSoDinhCao[chiSoDinh3] || null
+            'content': breakLineContent(ChiSoDinhCao[chiSoDinh3]) || null
         },
         4: {
             'age': tuoiDinh4 || null,
             'num': chiSoDinh4 || null,
-            'content': ChiSoDinhCao[chiSoDinh4] || null
+            'content': breakLineContent(ChiSoDinhCao[chiSoDinh4]) || null
         },
         'day': day || null,
         'month': month || null,
         'year': year || null
     }
+}
+
+export function breakLineContent (content) {
+    return content?.replace(/\n/g, '<br>')
 }
