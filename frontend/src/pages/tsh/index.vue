@@ -23,13 +23,16 @@ div.pa-2
     p.font-weight-bold.text-red Ngày sinh: {{chiSoTheoSinhNhat.chiSoNangLucNgaySinh.num}}
     span(v-html="chiSoTheoSinhNhat.chiSoNangLucNgaySinh.content")
     p.font-weight-bold.text-red Cân bằng: {{chiSoTheoTen.chiSoCanBang.num}}
+    span(v-html="chiSoTheoTen.chiSoCanBang.content")
     p.font-weight-bold.text-red Trưởng thành: {{chiSoTruongThanh}}
     p.font-weight-bold.text-red Cầu nối tình cảm: {{chiSoCauNoiTinhCam}}
     p.font-weight-bold.text-red Cầu nối hạnh phúc: {{chiSoCauNoiHanhPhuc}}
     p.font-weight-bold.text-red Nợ nghiệp: {{chiSoNoNghiep.numbersShow}}
     p(v-for="chiSo in Object.keys(chiSoNoNghiep.content)" v-html="chiSoNoNghiep.content[chiSo]")
-    p.font-weight-bold.text-red Nội cảm
-    p.font-weight-bold.text-red Khuyết thiếu:
+    p.font-weight-bold.text-red Nội cảm: {{chiSoTheoTen.chiSoNoiCam.num}}
+    p(v-for="chiSo in Object.keys(chiSoTheoTen.chiSoNoiCam.content)" v-html="chiSoTheoTen.chiSoNoiCam.content[chiSo]")
+    p.font-weight-bold.text-red Khuyết thiếu: {{chiSoTheoTen.chiSoKhuyetThieu.num}}
+    p(v-for="chiSo in Object.keys(chiSoTheoTen.chiSoKhuyetThieu.content)" v-html="chiSoTheoTen.chiSoKhuyetThieu.content[chiSo]")
     p.font-weight-bold.text-red Tháng cá nhân
     p.font-weight-bold.text-red Năm cá nhân
     p.font-weight-bold.text-red Đỉnh cao chặng:
@@ -45,8 +48,10 @@ div.pa-2
     p.font-weight-bold - Đỉnh cao chặng 4: Tuổi: {{chiSoDinhCao[4].age}} - Chỉ số {{chiSoDinhCao[4].num}}
     span(v-html="chiSoDinhCao[4].content")
     p.font-weight-bold.text-red Thách thức
-    p.font-weight-bold.text-red Tuổi trẻ:
-    p.font-weight-bold.text-red Viên mãn:
+    p.font-weight-bold.text-red Tuổi trẻ: {{chiSoTheoSinhNhat.chiSoTuoiTre.num}}
+    span(v-html="chiSoTheoSinhNhat.chiSoTuoiTre.content")
+    p.font-weight-bold.text-red Viên mãn: {{chiSoTheoSinhNhat.chiSoVienMan.num}}
+    span(v-html="chiSoTheoSinhNhat.chiSoVienMan.content")
     p.font-weight-bold.text-red Các số trong biểu đồ ngày sinh:
     p.font-weight-bold.text-red Mũi tên trong biểu đồ ngày sinh:
     p.font-weight-bold.text-red Mũi tên trong biểu đồ tên:

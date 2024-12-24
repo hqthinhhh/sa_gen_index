@@ -7,6 +7,11 @@ import ChiSoNoNghiep from "@/utils/tsh/ChiSoNoNghiep.js";
 import ChiSoLinhHon from "@/utils/tsh/ChiSoLinhHon.js";
 import ChiSoTinhCach from "@/utils/tsh/ChiSoTinhCach.js";
 import ChiSoSuMenh from "@/utils/tsh/ChiSoSuMenh.js";
+import ChiSoKhuyetThieu from "@/utils/tsh/ChiSoKhuyetThieu.js";
+import ChiSoCanBang from "@/utils/tsh/ChiSoCanBang.js";
+import ChiSoNoiCam from "@/utils/tsh/ChiSoNoiCam.js";
+import ChiSoTuoiTre from "@/utils/tsh/ChiSoTuoiTre.js";
+import ChiSoVienMan from "@/utils/tsh/ChiSoVienMan.js";
 const numerologyMap = {
   A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
   J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9,
@@ -64,39 +69,73 @@ function calculateChiSoCanBang (fullNameInput, checkNoNghiep=false) {
 
 // Hàm tính Thần số học từ họ tên
 export function calculateNumerologyByName(fullName, checkNoNghiep=false) {
-  const cleanName = removeAccents(fullName).replace(/\s+/g, '').toUpperCase();
-  const letters = cleanName.split('');
+    const cleanName = removeAccents(fullName).replace(/\s+/g, '').toUpperCase();
+    const letters = cleanName.split('');
 
-  // chỉ số Tâm hồn
-  const chiSoTamHon = calculateChiSoTamHon(letters, checkNoNghiep)
+    // chỉ số Tâm hồn
+    const chiSoTamHon = calculateChiSoTamHon(letters, checkNoNghiep)
 
-  // chỉ số Tính cách
-  const chiSoTinhCach = calculateChiSoTinhCach(letters, checkNoNghiep)
+    // chỉ số Tính cách
+    const chiSoTinhCach = calculateChiSoTinhCach(letters, checkNoNghiep)
 
-  // chỉ số Cân bằng
-  const chiSoCanBang = calculateChiSoCanBang(fullName, checkNoNghiep)
+    // chỉ số Cân bằng
+    const chiSoCanBang = calculateChiSoCanBang(fullName, checkNoNghiep)
 
-  // chỉ số Sứ mệnh
-  const chiSoSuMenh = reduceToSingleDigit((chiSoTamHon + chiSoTinhCach), true, checkNoNghiep)
+    // chỉ số Sứ mệnh
+    const chiSoSuMenh = reduceToSingleDigit((chiSoTamHon + chiSoTinhCach), true, checkNoNghiep)
 
-  // Kết quả
-  return {
-    'chiSoTamHon': {
-        'num': chiSoTamHon,
-        'content': breakLineContent(ChiSoLinhHon[chiSoTamHon])
-    },
-    'chiSoTinhCach': {
-        'num': chiSoTinhCach,
-        'content': breakLineContent(ChiSoTinhCach[chiSoTinhCach])
-    },
-    'chiSoCanBang': {
-        'num': chiSoCanBang
-    },
-    'chiSoSuMenh': {
-        'num': chiSoSuMenh,
-        'content': breakLineContent(ChiSoSuMenh[chiSoSuMenh])
+    // Nội cảm (số xuất hiện từ 3 lần trở lên)
+    const allNumbers = letters
+      .map(char => numerologyMap[char] || 0)
+      .filter(num => num > 0);
+    const frequencyMap = {};
+    allNumbers.forEach(num => {
+        frequencyMap[num] = (frequencyMap[num] || 0) + 1;
+    });
+    const empatheticNumbers = Object.keys(frequencyMap)
+      .filter(num => frequencyMap[num] >= 3)
+    const chiSoNoiCam = empatheticNumbers.map(Number)
+    const noiCamContent = {}
+    empatheticNumbers.forEach(num => {
+        noiCamContent[num] = breakLineContent(ChiSoNoiCam[num])
+    })
+    // Khuyết thiếu (các số không xuất hiện)
+    const missingNumbers = [];
+    const contentKhuyetThieu = {}
+    for (let i = 1; i <= 9; i++) {
+        if (!allNumbers.includes(i)) {
+            missingNumbers.push(i)
+            contentKhuyetThieu[i] = breakLineContent(ChiSoKhuyetThieu[i])
+        }
     }
-  };
+
+    // Kết quả
+    return {
+        'chiSoTamHon': {
+            'num': chiSoTamHon,
+            'content': breakLineContent(ChiSoLinhHon[chiSoTamHon])
+        },
+        'chiSoTinhCach': {
+            'num': chiSoTinhCach,
+            'content': breakLineContent(ChiSoTinhCach[chiSoTinhCach])
+        },
+        'chiSoCanBang': {
+            'num': chiSoCanBang,
+            'content': breakLineContent(ChiSoCanBang[chiSoCanBang])
+        },
+        'chiSoSuMenh': {
+            'num': chiSoSuMenh,
+            'content': breakLineContent(ChiSoSuMenh[chiSoSuMenh])
+        }
+        ,'chiSoNoiCam': {
+            'num': chiSoNoiCam.join(', '),
+            'content': noiCamContent
+        },
+        'chiSoKhuyetThieu': {
+            'num': missingNumbers.join(', '),
+            'content': contentKhuyetThieu
+        }
+    };
 }
 
 export function calculateChiSoChuDao (dateInput, checkSpecial=true, checkNoNghiep=false) {
@@ -157,8 +196,14 @@ export function calculateNumerologyByDate(dateInput, checkNoNghiep=false) {
             'num': chiSoThaiDo,
             'content': breakLineContent(ChiSoThaiDo[chiSoThaiDo])
         },
-        'chiSoTuoiTre': chiSoTuoiTre,
-        'chiSoVienMan': chiSoVienMan
+        'chiSoTuoiTre': {
+            'num': chiSoTuoiTre,
+            'content': breakLineContent(ChiSoTuoiTre[chiSoTuoiTre])
+        },
+        'chiSoVienMan': {
+            'num': chiSoVienMan,
+            'content': breakLineContent(ChiSoVienMan[chiSoVienMan])
+        }
     }
 }
 
@@ -185,17 +230,17 @@ export function calculateNoNghiep (dateInput, fullname) {
         noNghiepObject[chiSoThaiDo] = chiSoThaiDo
     }
 
-    if (noNghiepList.includes(chiSoTheoTen["chiSoTamHon"])) {
-        noNghiepObject[chiSoTheoTen["chiSoTamHon"]] = chiSoTheoTen["chiSoTamHon"]
+    if (noNghiepList.includes(chiSoTheoTen.chiSoTamHon.num)) {
+        noNghiepObject[chiSoTheoTen.chiSoTamHon.num] = chiSoTheoTen.chiSoTamHon.num
     }
-    if (noNghiepList.includes(chiSoTheoTen["chiSoTinhCach"])) {
-        noNghiepObject[chiSoTheoTen["chiSoTinhCach"]] = chiSoTheoTen["chiSoTinhCach"]
+    if (noNghiepList.includes(chiSoTheoTen.chiSoTinhCach.num)) {
+        noNghiepObject[chiSoTheoTen.chiSoTinhCach.num] = chiSoTheoTen.chiSoTinhCach.num
     }
-    if (noNghiepList.includes(chiSoTheoTen["chiSoCanBang"])) {
-        noNghiepObject[chiSoTheoTen["chiSoCanBang"]] = chiSoTheoTen["chiSoCanBang"]
+    if (noNghiepList.includes(chiSoTheoTen.chiSoCanBang.num)) {
+        noNghiepObject[chiSoTheoTen.chiSoCanBang.num] = chiSoTheoTen.chiSoCanBang.num
     }
-    if (noNghiepList.includes(chiSoTheoTen["chiSoSuMenh"])) {
-        noNghiepObject[chiSoTheoTen["chiSoSuMenh"]] = chiSoTheoTen["chiSoSuMenh"]
+    if (noNghiepList.includes(chiSoTheoTen.chiSoSuMenh.num)) {
+        noNghiepObject[chiSoTheoTen.chiSoSuMenh.num] = chiSoTheoTen.chiSoSuMenh.num
     }
 
     let chiSoNoNghiepArray = []
