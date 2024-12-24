@@ -11,18 +11,18 @@ div.pa-2
     br
     p.font-weight-bold.text-red Số chủ đạo (Đường đời): {{chiSoTheoSinhNhat.chiSoChuDao.num}}
     span(v-html="chiSoTheoSinhNhat.chiSoChuDao.content")
-    p.font-weight-bold.text-red Sứ mệnh: {{chiSoSuMenh}}
-    span(v-html="chiSoSuMenhContent")
+    p.font-weight-bold.text-red Sứ mệnh: {{chiSoTheoTen.chiSoSuMenh.num}}
+    span(v-html="chiSoTheoTen.chiSoSuMenh.content")
     p.font-weight-bold.text-red K/n đường đời sứ mệnh
-    p.font-weight-bold.text-red Linh hồn: {{chiSoTamHon}}
-    span(v-html="chiSoTamHonContent")
-    p.font-weight-bold.text-red Nhân cách {{chiSoTinhCach}}
-    span(v-html="chiSoTinhCachContent")
+    p.font-weight-bold.text-red Tâm hồn: {{chiSoTheoTen.chiSoTamHon.num}}
+    span(v-html="chiSoTheoTen.chiSoTamHon.content")
+    p.font-weight-bold.text-red Nhân cách {{chiSoTheoTen.chiSoTinhCach.num}}
+    span(v-html="chiSoTheoTen.chiSoTinhCach.content")
     p.font-weight-bold.text-red Thái độ: {{chiSoTheoSinhNhat.chiSoThaiDo.num}}
     span(v-html="chiSoTheoSinhNhat.chiSoThaiDo.content")
     p.font-weight-bold.text-red Ngày sinh: {{chiSoTheoSinhNhat.chiSoNangLucNgaySinh.num}}
     span(v-html="chiSoTheoSinhNhat.chiSoNangLucNgaySinh.content")
-    p.font-weight-bold.text-red Cân bằng: {{chiSoCanBang}}
+    p.font-weight-bold.text-red Cân bằng: {{chiSoTheoTen.chiSoCanBang.num}}
     p.font-weight-bold.text-red Trưởng thành: {{chiSoTruongThanh}}
     p.font-weight-bold.text-red Cầu nối tình cảm: {{chiSoCauNoiTinhCam}}
     p.font-weight-bold.text-red Cầu nối hạnh phúc: {{chiSoCauNoiHanhPhuc}}
@@ -63,11 +63,7 @@ div.pa-2
         reduceToSingleDigit,
         calculateNoNghiep,
         calculateDinhCao,
-        breakLineContent
     } from "@/utils/calculateTsh.js";
-    import ChiSoLinhHon from "@/utils/tsh/ChiSoLinhHon.js";
-    import ChiSoTinhCach from "@/utils/tsh/ChiSoTinhCach.js";
-    import ChiSoSuMenh from "@/utils/tsh/ChiSoSuMenh.js";
     const Test = defineComponent({
         name: 'Test',
         components: {},
@@ -75,13 +71,16 @@ div.pa-2
             const nameInput = ref('Hoàng Ngọc Bảo Trân') // t fix cứng tạm để đỡ phải nhập
             const birthInput = ref(null)
             const dateSelected = ref(new Date('Apr 16, 2001')) // t fix cứng tạm để đỡ phải nhập
-            const chiSoTheoTen = ref()
+            // const chiSoTheoTen = ref()
             // const chiSoTheoSinhNhat = ref()
             const onClickCalName= () => {
                 birthInput.value = dateSelected.value
-                chiSoTheoTen.value = calculateNumerologyByName(nameInput.value)
+                // chiSoTheoTen.value = calculateNumerologyByName(nameInput.value)
                 // chiSoTheoSinhNhat.value = calculateNumerologyByDate(birthInput.value)
             }
+            const chiSoTheoTen = computed(()=>{
+                return calculateNumerologyByName(nameInput.value)
+            })
             const chiSoTheoSinhNhat = computed(()=>{
                 return calculateNumerologyByDate(birthInput.value)
             })
@@ -99,26 +98,16 @@ div.pa-2
                 return chiSoTheoSinhNhat.value.chiSoChuDao.num
             })
             const chiSoTinhCach = computed(()=>{
-                return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoTinhCach"] : null
+                return chiSoTheoTen.value.chiSoTinhCach.num
             })
-            const chiSoTinhCachContent = computed(() => {
-                return breakLineContent(ChiSoTinhCach[chiSoTinhCach.value])
-            })
-            const chiSoTamHon = computed(()=>{
-                return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoTamHon"] : null
-            })
-            const chiSoTamHonContent = computed(() => {
-                return breakLineContent(ChiSoLinhHon[chiSoTamHon.value])
-            })
+
             const chiSoCanBang = computed(()=>{
-                return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoCanBang"] : null
+                return chiSoTheoTen.value.chiSoCanBang.num
             })
             const chiSoSuMenh = computed(()=>{
-                return chiSoTheoTen.value ? chiSoTheoTen.value["chiSoSuMenh"] : null
+                return chiSoTheoTen.value.chiSoSuMenh.num
             })
-            const chiSoSuMenhContent = computed(()=>{
-                return breakLineContent(ChiSoSuMenh[chiSoSuMenh.value])
-            })
+
             const chiSoTruongThanh = computed(()=>{
                 return reduceToSingleDigit((chiSoChuDao.value + chiSoSuMenh.value), true)
             })
@@ -140,12 +129,8 @@ div.pa-2
                 birthInput,
                 dateSelected,
                 resultTitle,
-                chiSoTamHonContent,
-                chiSoTinhCachContent,
-                chiSoSuMenhContent,
                 onClickCalName,
                 chiSoTinhCach,
-                chiSoTamHon,
                 chiSoCanBang,
                 chiSoSuMenh,
                 chiSoTruongThanh,
@@ -153,7 +138,8 @@ div.pa-2
                 chiSoCauNoiHanhPhuc,
                 chiSoNoNghiep,
                 chiSoDinhCao,
-                chiSoTheoSinhNhat
+                chiSoTheoSinhNhat,
+                chiSoTheoTen,
             }
         },
     })

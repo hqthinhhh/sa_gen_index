@@ -4,6 +4,9 @@ import SoNangLucNgaySinh from "@/utils/tsh/SoNangLucNgaySinh.js";
 import ChiSoThaiDo from "@/utils/tsh/ChiSoThaiDo.js";
 import ChiSoDinhCao from "@/utils/tsh/ChiSoDinhCao.js";
 import ChiSoNoNghiep from "@/utils/tsh/ChiSoNoNghiep.js";
+import ChiSoLinhHon from "@/utils/tsh/ChiSoLinhHon.js";
+import ChiSoTinhCach from "@/utils/tsh/ChiSoTinhCach.js";
+import ChiSoSuMenh from "@/utils/tsh/ChiSoSuMenh.js";
 const numerologyMap = {
   A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
   J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9,
@@ -78,10 +81,21 @@ export function calculateNumerologyByName(fullName, checkNoNghiep=false) {
 
   // Kết quả
   return {
-    'chiSoTamHon': chiSoTamHon,
-    'chiSoTinhCach': chiSoTinhCach,
-    'chiSoCanBang': chiSoCanBang,
-    'chiSoSuMenh': chiSoSuMenh
+    'chiSoTamHon': {
+        'num': chiSoTamHon,
+        'content': breakLineContent(ChiSoLinhHon[chiSoTamHon])
+    },
+    'chiSoTinhCach': {
+        'num': chiSoTinhCach,
+        'content': breakLineContent(ChiSoTinhCach[chiSoTinhCach])
+    },
+    'chiSoCanBang': {
+        'num': chiSoCanBang
+    },
+    'chiSoSuMenh': {
+        'num': chiSoSuMenh,
+        'content': breakLineContent(ChiSoSuMenh[chiSoSuMenh])
+    }
   };
 }
 
