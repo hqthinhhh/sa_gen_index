@@ -12,6 +12,7 @@ import ChiSoCanBang from "@/utils/tsh/ChiSoCanBang.js";
 import ChiSoNoiCam from "@/utils/tsh/ChiSoNoiCam.js";
 import ChiSoTuoiTre from "@/utils/tsh/ChiSoTuoiTre.js";
 import ChiSoVienMan from "@/utils/tsh/ChiSoVienMan.js";
+import ChiSoThachThuc from "@/utils/tsh/ChiSoThachThuc.js";
 const numerologyMap = {
   A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
   J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9,
@@ -183,6 +184,17 @@ export function calculateNumerologyByDate(dateInput, checkNoNghiep=false) {
     // Tinh chi so vien man
     const chiSoVienMan = calculateChiSoVienMan(dateInput)
 
+    // Tinh chi so thach thuc
+    const day = reduceToSingleDigit(dayjs(dateInput).format('DD'))
+    const month = reduceToSingleDigit(dayjs(dateInput).format('MM'))
+    const year = reduceToSingleDigit(dayjs(dateInput).format('YYYY'))
+
+    const chiSoThachThuc1 = Math.abs(month - day)
+    const chiSoThachThuc2 = Math.abs(day - year)
+    const chiSoThachThuc3 = Math.abs(chiSoThachThuc2 - chiSoThachThuc1)
+    const chiSoThachThuc4 = Math.abs(month - year)
+
+
     return {
         'chiSoNangLucNgaySinh': {
             'num': chiSoNangLucNgaySinh,
@@ -203,6 +215,24 @@ export function calculateNumerologyByDate(dateInput, checkNoNghiep=false) {
         'chiSoVienMan': {
             'num': chiSoVienMan,
             'content': breakLineContent(ChiSoVienMan[chiSoVienMan])
+        },
+        'chiSoThachThuc': {
+            1: {
+                'num': chiSoThachThuc1,
+                'content': breakLineContent(ChiSoThachThuc[chiSoThachThuc1])
+            },
+            2: {
+                'num': chiSoThachThuc2,
+                'content': breakLineContent(ChiSoThachThuc[chiSoThachThuc2])
+            },
+            3: {
+                'num': chiSoThachThuc3,
+                'content': breakLineContent(ChiSoThachThuc[chiSoThachThuc3])
+            },
+            4: {
+                'num': chiSoThachThuc4,
+                'content': breakLineContent(ChiSoThachThuc[chiSoThachThuc4])
+            },
         }
     }
 }
