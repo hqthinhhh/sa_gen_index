@@ -35,7 +35,15 @@ div.pa-2
         p.font-weight-bold.text-red Khuyết thiếu: {{chiSoTheoTen.chiSoKhuyetThieu.num}}
         p(v-for="chiSo in Object.keys(chiSoTheoTen.chiSoKhuyetThieu.content)" v-html="chiSoTheoTen.chiSoKhuyetThieu.content[chiSo]")
         p.font-weight-bold.text-red Tháng cá nhân
-        p.font-weight-bold.text-red Năm cá nhân
+        p.font-weight-bold.text-red Năm cá nhân:
+        p.font-weight-bold Năm {{chiSoTheoSinhNhat.chiSoNamCaNhan[1].year}}: {{chiSoTheoSinhNhat.chiSoNamCaNhan[1].num}}
+        span(v-html="chiSoTheoSinhNhat.chiSoNamCaNhan[1].content")
+        p.font-weight-bold Năm {{chiSoTheoSinhNhat.chiSoNamCaNhan[2].year}}: {{chiSoTheoSinhNhat.chiSoNamCaNhan[2].num}}
+        span(v-html="chiSoTheoSinhNhat.chiSoNamCaNhan[2].content")
+        p.font-weight-bold Năm {{chiSoTheoSinhNhat.chiSoNamCaNhan[3].year}}: {{chiSoTheoSinhNhat.chiSoNamCaNhan[3].num}}
+        span(v-html="chiSoTheoSinhNhat.chiSoNamCaNhan[3].content")
+        p.font-weight-bold Năm {{chiSoTheoSinhNhat.chiSoNamCaNhan[4].year}}: {{chiSoTheoSinhNhat.chiSoNamCaNhan[4].num}}
+        span(v-html="chiSoTheoSinhNhat.chiSoNamCaNhan[4].content")
         p.font-weight-bold.text-red Đỉnh cao chặng:
         p.font-weight-bold - Chỉ số Ngày: {{chiSoDinhCao.day}}
         p.font-weight-bold - Chỉ số Tháng: {{chiSoDinhCao.month}}
