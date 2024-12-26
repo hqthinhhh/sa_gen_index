@@ -6,7 +6,7 @@ div.pa-2
     )
     v-date-picker(v-model="dateSelected")
     br
-    v-btn(color="green" @click="onClickCalName" :disabled="!userInputName") Tạo chỉ số
+    v-btn(color="green" @click="onClickCalName" :disabled="!(userInputName && dateSelected)") Tạo chỉ số
     p Kết quả: {{resultTitle}}
     br
     .result(v-if="nameInput && birthInput" )
@@ -14,7 +14,6 @@ div.pa-2
         span(v-html="chiSoTheoSinhNhat.chiSoChuDao.content")
         p.font-weight-bold.text-red Sứ mệnh: {{chiSoTheoTen.chiSoSuMenh.num}}
         span(v-html="chiSoTheoTen.chiSoSuMenh.content")
-        p.font-weight-bold.text-red K/n đường đời sứ mệnh
         p.font-weight-bold.text-red Tâm hồn: {{chiSoTheoTen.chiSoTamHon.num}}
         span(v-html="chiSoTheoTen.chiSoTamHon.content")
         p.font-weight-bold.text-red Nhân cách {{chiSoTheoTen.chiSoTinhCach.num}}
@@ -29,7 +28,8 @@ div.pa-2
         span(v-html="chiSoTruongThanh.content")
         p.font-weight-bold.text-red Cầu nối tình cảm: {{chiSoCauNoiTinhCam.num}}
         span(v-html="chiSoCauNoiTinhCam.content")
-        p.font-weight-bold.text-red Cầu nối hạnh phúc: {{chiSoCauNoiHanhPhuc}}
+        p.font-weight-bold.text-red Cầu nối hạnh phúc: {{chiSoCauNoiHanhPhuc.num}}
+        span(v-html="chiSoCauNoiHanhPhuc.content")
         p.font-weight-bold.text-red Nợ nghiệp: {{chiSoNoNghiep.numbersShow}}
         p(v-for="chiSo in Object.keys(chiSoNoNghiep.content)" v-html="chiSoNoNghiep.content[chiSo]")
         p.font-weight-bold.text-red Nội cảm: {{chiSoTheoTen.chiSoNoiCam.num}}
@@ -99,6 +99,7 @@ div.pa-2
     } from "@/utils/calculateTsh.js";
     import ChiSoTruongThanh from "@/utils/tsh/ChiSoTruongThanh.js";
     import ChiSoCauNoiTinhCam from "@/utils/tsh/ChiSoCauNoiTinhCam.js";
+    import ChiSoCauNoiHanhPhuc from "@/utils/tsh/ChiSoCauNoiHanhPhuc.js";
     const Test = defineComponent({
         name: 'Test',
         components: {},
@@ -128,7 +129,7 @@ div.pa-2
             )
             const resultTitle = computed(
                 () => {
-                    return (nameInput.value ? nameInput.value : 'Hãy nhập họ tên. ') + (birthInput.value ? fullBirthFormat.value : '')
+                    return (nameInput.value ? nameInput.value : 'Hãy nhập họ tên và ngày sinh ') + (birthInput.value ? fullBirthFormat.value : '')
                 }
             )
             const chiSoChuDao = computed(()=>{
@@ -163,7 +164,11 @@ div.pa-2
                 }
             })
             const chiSoCauNoiHanhPhuc = computed(()=>{
-                return reduceToSingleDigit(Math.abs(chiSoTinhCach.value - chiSoCanBang.value))
+                const chiSo = reduceToSingleDigit(Math.abs(chiSoTinhCach.value - chiSoCanBang.value))
+                return {
+                    'num': chiSo,
+                    'content': breakLineContent(ChiSoCauNoiHanhPhuc[chiSo])
+                }
             })
             const chiSoNoNghiep = computed(()=>{
                 return calculateNoNghiep(birthInput.value, nameInput.value)
