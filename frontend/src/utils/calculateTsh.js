@@ -14,6 +14,7 @@ import ChiSoTuoiTre from "@/utils/tsh/ChiSoTuoiTre.js";
 import ChiSoVienMan from "@/utils/tsh/ChiSoVienMan.js";
 import ChiSoThachThuc from "@/utils/tsh/ChiSoThachThuc.js";
 import ChiSoNamCaNhan from "@/utils/tsh/ChiSoNamCaNhan.js";
+import ChiSoThangCaNhan from "@/utils/tsh/ChiSoThangCaNhan.js";
 const numerologyMap = {
   A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
   J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9,
@@ -169,6 +170,49 @@ function calculateChiSoVienMan (dateInput) {
     return reduceToSingleDigit(yearFormat)
 }
 
+function calculateThangCaNhan(dateInput) {
+    let chiSoChuDao = calculateChiSoChuDao(dateInput, true)
+    if (chiSoChuDao === 33) {
+        chiSoChuDao = 6
+    }
+    const yearFormat = dayjs(dateInput).format('YYYY')
+    const chiSoYear = reduceToSingleDigit(yearFormat)
+
+    const thisMonth = dayjs().startOf('month')
+    const thisMonthFormat = thisMonth.format('MM')
+    const next1MonthFormat = thisMonth.add(1, 'month').format('MM')
+    const next2MonthFormat = thisMonth.add(2, 'month').format('MM')
+    const next3MonthFormat = thisMonth.add(3, 'month').format('MM')
+
+    const thisMonthAbbreviated = reduceToSingleDigit(chiSoYear + Number(thisMonthFormat))
+    const next1MonthAbbreviated = reduceToSingleDigit(chiSoYear + Number(next1MonthFormat))
+    const next2MonthAbbreviated = reduceToSingleDigit(chiSoYear + Number(next2MonthFormat))
+    const next3MonthAbbreviated = reduceToSingleDigit(chiSoYear + Number(next3MonthFormat))
+
+    return {
+        1: {
+            'month': thisMonth.format('MM/YYYY'),
+            'num': thisMonthAbbreviated,
+            'content': breakLineContent(ChiSoThangCaNhan[thisMonthAbbreviated][chiSoChuDao])
+        },
+        2: {
+            'month':  thisMonth.add(1, 'month').format('MM/YYYY'),
+            'num': next1MonthAbbreviated,
+            'content': breakLineContent(ChiSoThangCaNhan[next1MonthAbbreviated][chiSoChuDao])
+        },
+        3: {
+            'month':  thisMonth.add(2, 'month').format('MM/YYYY'),
+            'num': next2MonthAbbreviated,
+            'content': breakLineContent(ChiSoThangCaNhan[next2MonthAbbreviated][chiSoChuDao])
+        },
+        4: {
+            'month':  thisMonth.add(3, 'month').format('MM/YYYY'),
+            'num': next3MonthAbbreviated,
+            'content': breakLineContent(ChiSoThangCaNhan[next3MonthAbbreviated][chiSoChuDao])
+        },
+    }
+}
+
 function calculateNamCaNhan (dateInput) {
     let chiSoChuDao = calculateChiSoChuDao(dateInput, true)
     if (chiSoChuDao === 33) {
@@ -177,7 +221,7 @@ function calculateNamCaNhan (dateInput) {
     const dayMonthFormat = dayjs(dateInput).format('DDMM')
     const chiSoDayMonth = reduceToSingleDigit(dayMonthFormat)
 
-    const thisYear = dayjs('2024-10-31').startOf('year')
+    const thisYear = dayjs().startOf('year')
     const thisYearFormat = thisYear.format('YYYY')
     const next1YearFormat = thisYear.add(1, 'year').format('YYYY')
     const next2YearFormat = thisYear.add(2, 'year').format('YYYY')
@@ -241,6 +285,9 @@ export function calculateNumerologyByDate(dateInput, checkNoNghiep=false) {
     // Tinh chi so nam ca nhan
     const chiSoNamCaNhan = calculateNamCaNhan(dateInput)
 
+    // Tinh chi so thang ca nhan
+    const chiSoThangCaNhan = calculateThangCaNhan(dateInput)
+
     return {
         'chiSoNangLucNgaySinh': {
             'num': chiSoNangLucNgaySinh,
@@ -280,7 +327,8 @@ export function calculateNumerologyByDate(dateInput, checkNoNghiep=false) {
                 'content': breakLineContent(ChiSoThachThuc[chiSoThachThuc4])
             },
         },
-        'chiSoNamCaNhan': chiSoNamCaNhan
+        'chiSoNamCaNhan': chiSoNamCaNhan,
+        'chiSoThangCaNhan': chiSoThangCaNhan,
     }
 }
 

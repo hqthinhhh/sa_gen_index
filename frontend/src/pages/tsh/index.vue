@@ -34,7 +34,15 @@ div.pa-2
         p(v-for="chiSo in Object.keys(chiSoTheoTen.chiSoNoiCam.content)" v-html="chiSoTheoTen.chiSoNoiCam.content[chiSo]")
         p.font-weight-bold.text-red Khuyết thiếu: {{chiSoTheoTen.chiSoKhuyetThieu.num}}
         p(v-for="chiSo in Object.keys(chiSoTheoTen.chiSoKhuyetThieu.content)" v-html="chiSoTheoTen.chiSoKhuyetThieu.content[chiSo]")
-        p.font-weight-bold.text-red Tháng cá nhân
+        p.font-weight-bold.text-red Tháng cá nhân:
+        p.font-weight-bold.text-red Tháng {{chiSoTheoSinhNhat.chiSoThangCaNhan[1].month}}: {{chiSoTheoSinhNhat.chiSoThangCaNhan[1].num}}
+        span(v-html="chiSoTheoSinhNhat.chiSoThangCaNhan[1].content")
+        p.font-weight-bold.text-red Tháng {{chiSoTheoSinhNhat.chiSoThangCaNhan[2].month}}: {{chiSoTheoSinhNhat.chiSoThangCaNhan[2].num}}
+        span(v-html="chiSoTheoSinhNhat.chiSoThangCaNhan[2].content")
+        p.font-weight-bold.text-red Tháng {{chiSoTheoSinhNhat.chiSoThangCaNhan[3].month}}: {{chiSoTheoSinhNhat.chiSoThangCaNhan[3].num}}
+        span(v-html="chiSoTheoSinhNhat.chiSoThangCaNhan[3].content")
+        p.font-weight-bold.text-red Tháng {{chiSoTheoSinhNhat.chiSoThangCaNhan[4].month}}: {{chiSoTheoSinhNhat.chiSoThangCaNhan[4].num}}
+        span(v-html="chiSoTheoSinhNhat.chiSoThangCaNhan[4].content")
         p.font-weight-bold.text-red Năm cá nhân:
         p.font-weight-bold Năm {{chiSoTheoSinhNhat.chiSoNamCaNhan[1].year}}: {{chiSoTheoSinhNhat.chiSoNamCaNhan[1].num}}
         span(v-html="chiSoTheoSinhNhat.chiSoNamCaNhan[1].content")
