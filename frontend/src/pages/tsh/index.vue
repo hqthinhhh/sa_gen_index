@@ -25,7 +25,8 @@ div.pa-2
         span(v-html="chiSoTheoSinhNhat.chiSoNangLucNgaySinh.content")
         p.font-weight-bold.text-red Cân bằng: {{chiSoTheoTen.chiSoCanBang.num}}
         span(v-html="chiSoTheoTen.chiSoCanBang.content")
-        p.font-weight-bold.text-red Trưởng thành: {{chiSoTruongThanh}}
+        p.font-weight-bold.text-red Trưởng thành: {{chiSoTruongThanh.num}}
+        span(v-html="chiSoTruongThanh.content")
         p.font-weight-bold.text-red Cầu nối tình cảm: {{chiSoCauNoiTinhCam}}
         p.font-weight-bold.text-red Cầu nối hạnh phúc: {{chiSoCauNoiHanhPhuc}}
         p.font-weight-bold.text-red Nợ nghiệp: {{chiSoNoNghiep.numbersShow}}
@@ -93,7 +94,9 @@ div.pa-2
         reduceToSingleDigit,
         calculateNoNghiep,
         calculateDinhCao,
+        breakLineContent
     } from "@/utils/calculateTsh.js";
+    import ChiSoTruongThanh from "@/utils/tsh/ChiSoTruongThanh.js";
     const Test = defineComponent({
         name: 'Test',
         components: {},
@@ -141,7 +144,14 @@ div.pa-2
             })
 
             const chiSoTruongThanh = computed(()=>{
-                return reduceToSingleDigit((chiSoChuDao.value + chiSoSuMenh.value), true)
+                let chiSo = reduceToSingleDigit((chiSoChuDao.value + chiSoSuMenh.value), true)
+                if (chiSo === 33) {
+                    chiSo = 6
+                }
+                return {
+                    'num': chiSo,
+                    'content': breakLineContent(ChiSoTruongThanh[chiSo])
+                }
             })
             const chiSoCauNoiTinhCam = computed(()=>{
                 return reduceToSingleDigit(Math.abs(chiSoChuDao.value - chiSoSuMenh.value))
